@@ -25,52 +25,47 @@ const userSchema = new mongoose.Schema({
   role: {
     type: String,
     enum: ['student', 'faculty', 'admin'],
-    default: 'student'
+    required: true
   },
-  matricNumber: {
-    type: String,
-    trim: true,
-    uppercase: true
-  },
-  academicLevel: {
-    type: Number,
-    enum: [100, 200, 300, 400]
-  },
-  employeeId: {
-    type: String,
-    trim: true
-  },
-  department: {
-    type: String,
-    default: 'Computer Science'
-  },
-  isActive: {
-    type: Boolean,
-    default: true
-  },
-  lastLogin: {
-    type: Date
-  }
-}, {
-  timestamps: true
-});
+  // Student fields
+  matricNumber: { type: String, trim: true, uppercase: true },
+  academicLevel: { type: Number, enum: [100, 200, 300, 400] },
+  // Faculty/Admin fields
+  employeeId: { type: String, trim: true },
+  department: { type: String, default: 'Computer Science' },
+  // Status
+  isActive: { type: Boolean, default: true },
+  isSuspended: { type: Boolean, default: false },
+  suspendedReason: String,
+  lastLogin: Date,
+  lastSeen: Date,
+  // Security — account lockout
+  failedLoginAttempts: { type: Number, default: 0 },
+  lockedUntil: Date,
+  // Theme preference
+  theme: { type: String, enum: ['light', 'dark'], default: 'light' }
+}, { timestamps: true });
 
-// Hash password before saving — no next() in async hooks
+// Hash password before saving
 userSchema.pre('save', async function() {
   if (!this.isModified('password')) return;
   const salt = await bcrypt.genSalt(12);
   this.password = await bcrypt.hash(this.password, salt);
 });
 
-// Compare password method
 userSchema.methods.comparePassword = async function(candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
-// Remove password from JSON output
+userSchema.methods.isLocked = function() {
+  return this.lockedUntil && this.lockedUntil > Date.now();
+};
+
 userSchema.methods.toJSON = function() {
   const user = this.toObject();
   delete user.password;
+  delete user.failedLoginAttempts;
+  delete user.lockedUntil;
   return user;
 };
 

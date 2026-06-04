@@ -217,7 +217,7 @@ const approveResource = async (req, res) => {
     const resource = await Resource.findByIdAndUpdate(
       req.params.id,
       { isApproved: true, approvedBy: req.user._id, approvedAt: new Date() },
-      { new: true }
+      { returnDocument: 'after' }
     );
 
     if (!resource) {

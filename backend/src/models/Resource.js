@@ -92,6 +92,10 @@ const resourceSchema = new mongoose.Schema({
     trim: true
   },
   // Engagement metrics
+  viewCount: {
+    type: Number,
+    default: 0
+  },
   downloadCount: {
     type: Number,
     default: 0
