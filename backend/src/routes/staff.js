@@ -33,3 +33,21 @@ router.get('/announcements', async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 });
+
+
+// Update request status
+const ResourceRequest = require('../models/ResourceRequest');
+router.put('/requests/:id', protect, staffOnly, async (req, res) => {
+  try {
+    const { status, adminNote } = req.body;
+    const request = await ResourceRequest.findByIdAndUpdate(
+      req.params.id,
+      { status, adminNote },
+      { returnDocument: 'after' }
+    );
+    if (!request) return res.status(404).json({ error: 'Request not found' });
+    return res.json({ success: true, request });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});

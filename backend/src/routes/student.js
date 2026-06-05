@@ -39,3 +39,19 @@ router.post('/resources/:id/review', protect, studentOnly, async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 });
+
+// Get announcements for students
+const Announcement = require('../models/Announcement');
+router.get('/announcements', protect, studentOnly, async (req, res) => {
+  try {
+    const announcements = await Announcement.find({
+      isActive: true,
+      $or: [{ targetRole: 'student' }, { targetRole: 'all' }]
+    })
+      .populate('createdBy', 'fullName')
+      .sort({ isPinned: -1, createdAt: -1 });
+    return res.json({ success: true, announcements });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
