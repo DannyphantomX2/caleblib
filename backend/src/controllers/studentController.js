@@ -73,22 +73,53 @@ const getResource = async (req, res) => {
 const downloadResource = async (req, res) => {
   try {
     const resource = await Resource.findById(req.params.id);
-    if (!resource || !resource.isApproved) return res.status(404).json({ error: 'Resource not found' });
-    await Resource.findByIdAndUpdate(req.params.id, { $inc: { downloadCount: 1 } });
-    await log({
-      userId: req.user._id, userEmail: req.user.email, userRole: 'student',
-      action: 'DOWNLOAD_RESOURCE', description: `Downloaded: ${resource.title}`,
-      resourceId: resource._id, req
-    });
-    const downloadStream = gridfsService.downloadFile(resource.fileId.toString());
+    if (!resource || !resource.isApproved) {
+      return res.status(404).json({ error: 'Resource not found' });
+    }
+
+    // Get original filename from GridFS metadata
+    let originalName = resource.fileName;
+    try {
+      const fileInfo = await gridfsService.getFileInfo(resource.fileId.toString());
+      if (fileInfo?.metadata?.originalName) {
+        originalName = fileInfo.metadata.originalName;
+      }
+    } catch (e) {
+      console.error('Could not get file info:', e.message);
+    }
+
+    // Set headers before streaming
     res.set({
       'Content-Type': 'application/octet-stream',
-      'Content-Disposition': `attachment; filename="${resource.fileName}"`
+      'Content-Disposition': `attachment; filename="${originalName}"`,
+      'Access-Control-Expose-Headers': 'Content-Disposition'
     });
-    downloadStream.on('error', () => res.status(404).json({ error: 'File not found' }));
+
+    const downloadStream = gridfsService.downloadFile(resource.fileId.toString());
+
+    downloadStream.on('error', (err) => {
+      console.error('GridFS stream error:', err);
+      if (!res.headersSent) {
+        res.status(404).json({ error: 'File not found in storage' });
+      }
+    });
+
+    downloadStream.on('end', async () => {
+      // Increment count and log only after successful stream
+      await Resource.findByIdAndUpdate(req.params.id, { $inc: { downloadCount: 1 } });
+      await log({
+        userId: req.user._id, userEmail: req.user.email, userRole: 'student',
+        action: 'DOWNLOAD_RESOURCE', description: `Downloaded: ${resource.title}`,
+        resourceId: resource._id, req
+      }).catch(() => {});
+    });
+
     downloadStream.pipe(res);
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    console.error('DOWNLOAD ERROR:', error);
+    if (!res.headersSent) {
+      return res.status(500).json({ error: error.message });
+    }
   }
 };
 

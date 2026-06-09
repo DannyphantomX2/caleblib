@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Bell, Megaphone, Pin, CheckCheck, Trash2 } from 'lucide-react'
 import api from '../../services/api'
@@ -7,10 +8,22 @@ import { SkRow } from '../../components/common/Skeleton'
 import { formatRelativeTime } from '../../utils/helpers'
 import toast from 'react-hot-toast'
 
+const getViewedAnnouncements = () => {
+  try { return JSON.parse(localStorage.getItem('viewed_announcements') || '[]') }
+  catch { return [] }
+}
+
+const markAnnouncementsViewed = (ids) => {
+  try {
+    const existing = getViewedAnnouncements()
+    const merged = [...new Set([...existing, ...ids])]
+    localStorage.setItem('viewed_announcements', JSON.stringify(merged))
+  } catch {}
+}
+
 const StudentNotifications = () => {
   const queryClient = useQueryClient()
 
-  // Fetch both announcements and system notifications
   const { data: annData, isLoading: loadingAnn } = useQuery({
     queryKey: ['student-announcements'],
     queryFn: async () => { const r = await api.get('/student/announcements'); return r.data }
@@ -20,6 +33,16 @@ const StudentNotifications = () => {
     queryKey: ['notifications'],
     queryFn: async () => { const r = await api.get('/notifications'); return r.data }
   })
+
+  // Mark all currently loaded announcements as viewed when page opens
+  useEffect(() => {
+    if (annData?.announcements?.length > 0) {
+      const ids = annData.announcements.map(a => a._id)
+      markAnnouncementsViewed(ids)
+      // Invalidate dashboard so the count updates immediately
+      queryClient.invalidateQueries(['student-dashboard'])
+    }
+  }, [annData])
 
   const markAllMutation = useMutation({
     mutationFn: async () => { const r = await api.put('/notifications/read-all'); return r.data },
@@ -46,7 +69,9 @@ const StudentNotifications = () => {
         <div>
           <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 4 }}>Notifications</h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>
-            {announcements.length > 0 ? `${announcements.length} announcement${announcements.length !== 1 ? 's' : ''}` : 'All caught up'}
+            {announcements.length > 0
+              ? `${announcements.length} announcement${announcements.length !== 1 ? 's' : ''}`
+              : 'All caught up'}
             {unreadCount > 0 ? ` · ${unreadCount} unread` : ''}
           </p>
         </div>
@@ -73,14 +98,11 @@ const StudentNotifications = () => {
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
-          {/* Announcements section */}
           {announcements.length > 0 && (
             <div style={{ background: 'var(--card-bg)', border: '1px solid var(--card-border)', borderRadius: 'var(--radius)', boxShadow: 'var(--card-shadow)', overflow: 'hidden' }}>
               <div style={{ padding: '14px 20px', borderBottom: '1px solid var(--card-border)', background: 'var(--page-bg-2)', display: 'flex', alignItems: 'center', gap: 8 }}>
                 <Megaphone size={15} color="var(--blue-600)" />
-                <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>
-                  Announcements
-                </span>
+                <span style={{ fontSize: 13, fontWeight: 700 }}>Announcements</span>
                 <Badge color="blue" style={{ marginLeft: 4 }}>{announcements.length}</Badge>
               </div>
               {announcements.map((a, i) => (
@@ -108,12 +130,11 @@ const StudentNotifications = () => {
             </div>
           )}
 
-          {/* System notifications section */}
           {notifications.length > 0 && (
             <div style={{ background: 'var(--card-bg)', border: '1px solid var(--card-border)', borderRadius: 'var(--radius)', boxShadow: 'var(--card-shadow)', overflow: 'hidden' }}>
               <div style={{ padding: '14px 20px', borderBottom: '1px solid var(--card-border)', background: 'var(--page-bg-2)', display: 'flex', alignItems: 'center', gap: 8 }}>
                 <Bell size={15} color="var(--text-muted)" />
-                <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>System Notifications</span>
+                <span style={{ fontSize: 13, fontWeight: 700 }}>System Notifications</span>
               </div>
               {notifications.map((n, i) => (
                 <div key={n._id} style={{

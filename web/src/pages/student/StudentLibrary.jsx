@@ -1,15 +1,19 @@
 import { useState } from 'react'
-import { useQuery, useMutation } from '@tanstack/react-query'
-import { Search, Download, Bookmark, Filter, X, BookOpen } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
+import { Search, Download, X, BookOpen } from 'lucide-react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import api from '../../services/api'
+import { downloadResource } from '../../services/downloadService'
 import Badge from '../../components/common/Badge'
 import Btn from '../../components/common/Btn'
 import { SkCard } from '../../components/common/Skeleton'
 import { getFileIcon, getResourceTypeLabel, getResourceTypeColor, formatFileSize, formatRelativeTime, truncate } from '../../utils/helpers'
 import toast from 'react-hot-toast'
 
-const typeColorMap = { lecture_notes: 'blue', past_questions: 'yellow', project_report: 'green', code_example: 'purple', dataset: 'red', tutorial: 'teal', technical_doc: 'gray', other: 'gray' }
+const typeColorMap = {
+  lecture_notes:'blue', past_questions:'yellow', project_report:'green',
+  code_example:'purple', dataset:'red', tutorial:'teal', technical_doc:'gray', other:'gray'
+}
 
 const StudentLibrary = () => {
   const navigate = useNavigate()
@@ -22,29 +26,46 @@ const StudentLibrary = () => {
     courseCode: ''
   })
   const [page, setPage] = useState(1)
+  const [downloading, setDownloading] = useState({})
 
   const params = { page, limit: 12, ...filters }
   if (search) params.search = search
 
   const { data, isLoading } = useQuery({
     queryKey: ['student-resources', params],
-    queryFn: async () => { const r = await api.get('/student/resources', { params }); return r.data }
+    queryFn: async () => {
+      const r = await api.get('/student/resources', { params })
+      return r.data
+    }
   })
 
-  const downloadMutation = useMutation({
-    mutationFn: async ({ id, fileName }) => {
-      const res = await api.get(`/student/resources/${id}/download`, { responseType: 'blob' })
-      const url = window.URL.createObjectURL(new Blob([res.data]))
-      const a = document.createElement('a')
-      a.href = url; a.download = fileName; document.body.appendChild(a); a.click(); a.remove()
-      window.URL.revokeObjectURL(url)
-    },
-    onSuccess: () => toast.success('Download started'),
-    onError: () => toast.error('Download failed')
-  })
+  const handleDownload = async (e, id) => {
+    e.stopPropagation()
+    e.preventDefault()
+    if (downloading[id]) return
+    setDownloading(p => ({ ...p, [id]: true }))
+    try {
+      await downloadResource(id)
+      toast.success('Download started')
+    } catch {
+      toast.error('Download failed')
+    } finally {
+      setDownloading(p => ({ ...p, [id]: false }))
+    }
+  }
 
   const hasFilters = Object.values(filters).some(Boolean) || search
-  const sel = { padding: '8px 12px', background: 'var(--card-bg)', border: '1.5px solid var(--card-border)', borderRadius: 8, color: 'var(--text-primary)', fontSize: 13, cursor: 'pointer', fontFamily: 'var(--font)' }
+
+  const sel = {
+    padding: '8px 12px',
+    background: 'var(--card-bg)',
+    border: '1.5px solid var(--card-border)',
+    borderRadius: 8,
+    color: 'var(--text-primary)',
+    fontSize: 13,
+    cursor: 'pointer',
+    fontFamily: 'var(--font)'
+  }
 
   return (
     <div style={{ maxWidth: 1100 }}>
@@ -116,12 +137,14 @@ const StudentLibrary = () => {
                   <div style={{ width: 42, height: 42, borderRadius: 10, background: `${getResourceTypeColor(r.resourceType)}12`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22 }}>
                     {getFileIcon(r.fileFormat)}
                   </div>
-                  <Badge color={typeColorMap[r.resourceType] || 'gray'}>{getResourceTypeLabel(r.resourceType).split(' ')[0]}</Badge>
+                  <Badge color={typeColorMap[r.resourceType] || 'gray'}>{getResourceTypeLabel(r.resourceType)}</Badge>
                 </div>
 
                 <div>
                   <h3 style={{ fontSize: 14, fontWeight: 700, marginBottom: 4, lineHeight: 1.35 }}>{truncate(r.title, 52)}</h3>
-                  <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>{r.courseCode}{r.courseTitle ? ` · ${truncate(r.courseTitle, 22)}` : ''}</p>
+                  <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>
+                    {r.courseCode}{r.courseTitle ? ` · ${truncate(r.courseTitle, 22)}` : ''}
+                  </p>
                 </div>
 
                 <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
@@ -141,8 +164,8 @@ const StudentLibrary = () => {
                     size="xs"
                     variant="outline"
                     icon={<Download size={12} />}
-                    onClick={e => { e.stopPropagation(); downloadMutation.mutate({ id: r._id, fileName: r.fileName }) }}
-                    loading={downloadMutation.isPending}
+                    onClick={e => handleDownload(e, r._id)}
+                    loading={!!downloading[r._id]}
                   >
                     Download
                   </Btn>
@@ -165,4 +188,5 @@ const StudentLibrary = () => {
     </div>
   )
 }
+
 export default StudentLibrary

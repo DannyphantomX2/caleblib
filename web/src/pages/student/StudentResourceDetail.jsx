@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Download, Bookmark, BookmarkCheck, ArrowLeft, Star, User, Calendar, FileText, Tag, Eye } from 'lucide-react'
 import api from '../../services/api'
+import { downloadResource } from '../../services/downloadService'
 import Badge from '../../components/common/Badge'
 import Btn from '../../components/common/Btn'
 import { Sk } from '../../components/common/Skeleton'
@@ -30,17 +31,9 @@ const StudentResourceDetail = () => {
     }
   })
 
-  const downloadMutation = useMutation({
+    const downloadMutation = useMutation({
     mutationFn: async () => {
-      const res = await api.get(`/student/resources/${id}/download`, { responseType: 'blob' })
-      const url = window.URL.createObjectURL(new Blob([res.data]))
-      const a = document.createElement('a')
-      a.href = url
-      a.download = data.resource.fileName
-      document.body.appendChild(a)
-      a.click()
-      a.remove()
-      window.URL.revokeObjectURL(url)
+      await downloadResource(id)
     },
     onSuccess: () => {
       toast.success('Download started')

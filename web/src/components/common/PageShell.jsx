@@ -1,14 +1,35 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
-import { Menu, X, Bell, Sun, Moon, LogOut, ChevronRight } from 'lucide-react'
+import { Menu, X, Sun, Moon, LogOut, ChevronRight } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
+import { useQuery } from '@tanstack/react-query'
+import api from '../../services/api'
 import Spinner from './Spinner'
+
+const getViewedAnnouncements = () => {
+  try { return JSON.parse(localStorage.getItem('viewed_announcements') || '[]') }
+  catch { return [] }
+}
 
 const PageShell = ({ nav, children, role = 'student' }) => {
   const [open, setOpen] = useState(true)
   const { user, logout, theme, toggleTheme } = useAuth()
   const navigate = useNavigate()
   const [loggingOut, setLoggingOut] = useState(false)
+
+  // Fetch unread announcement count for students
+  const { data: annData } = useQuery({
+    queryKey: ['student-announcements'],
+    queryFn: async () => { const r = await api.get('/student/announcements'); return r.data },
+    enabled: role === 'student',
+    refetchInterval: 60000
+  })
+
+  // Count unviewed announcements
+  const viewedIds = getViewedAnnouncements()
+  const unreadAnnCount = role === 'student'
+    ? (annData?.announcements || []).filter(a => !viewedIds.includes(a._id)).length
+    : 0
 
   const roleLabel = { student: 'Student Portal', staff: 'Staff Portal', admin: 'Admin Panel' }
   const loginPath = { student: '/login/student', staff: '/login/staff', admin: '/login/admin' }
@@ -18,6 +39,17 @@ const PageShell = ({ nav, children, role = 'student' }) => {
     await logout()
     navigate(loginPath[role] || '/')
   }
+
+  // Inject badge counts into nav items
+  const navWithBadges = nav.map(group => ({
+    ...group,
+    items: group.items.map(item => {
+      if (item.to === '/student/notifications' && unreadAnnCount > 0) {
+        return { ...item, badge: unreadAnnCount }
+      }
+      return item
+    })
+  }))
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--page-bg)' }}>
@@ -55,7 +87,7 @@ const PageShell = ({ nav, children, role = 'student' }) => {
 
           {/* Nav */}
           <nav style={{ flex: 1, overflowY: 'auto', padding: '12px 10px' }}>
-            {nav.map(group => (
+            {navWithBadges.map(group => (
               <div key={group.label} style={{ marginBottom: 20 }}>
                 <div style={{ fontSize: 10, fontWeight: 700, color: '#3a506b', letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0 8px 6px' }}>
                   {group.label}
@@ -63,26 +95,39 @@ const PageShell = ({ nav, children, role = 'student' }) => {
                 {group.items.map(({ to, icon: Icon, label, badge }) => (
                   <NavLink key={to} to={to} style={{ textDecoration: 'none', display: 'block', marginBottom: 2 }}>
                     {({ isActive }) => (
-                      <div style={{
-                        display: 'flex', alignItems: 'center', gap: 9,
-                        padding: '9px 10px', borderRadius: 9,
-                        background: isActive ? 'var(--sidebar-active)' : 'transparent',
-                        color: isActive ? '#fff' : 'var(--sidebar-text)',
-                        transition: 'var(--transition)', cursor: 'pointer',
-                        fontSize: 13.5, fontWeight: isActive ? 600 : 400,
-                        borderLeft: isActive ? '3px solid var(--sidebar-accent)' : '3px solid transparent'
-                      }}
+                      <div
+                        style={{
+                          display: 'flex', alignItems: 'center', gap: 9,
+                          padding: '9px 10px', borderRadius: 9,
+                          background: isActive ? 'var(--sidebar-active)' : 'transparent',
+                          color: isActive ? '#fff' : 'var(--sidebar-text)',
+                          transition: 'var(--transition)', cursor: 'pointer',
+                          fontSize: 13.5, fontWeight: isActive ? 600 : 400,
+                          borderLeft: isActive ? '3px solid var(--sidebar-accent)' : '3px solid transparent'
+                        }}
                         onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = 'var(--sidebar-hover)' }}
                         onMouseLeave={e => { if (!isActive) e.currentTarget.style.background = 'transparent' }}
                       >
                         <Icon size={16} style={{ flexShrink: 0, opacity: isActive ? 1 : 0.7 }} />
                         <span style={{ flex: 1 }}>{label}</span>
+                        {/* Notification badge */}
                         {badge > 0 && (
-                          <span style={{ background: '#ef4444', color: '#fff', borderRadius: 20, fontSize: 10, fontWeight: 700, padding: '1px 6px', minWidth: 18, textAlign: 'center' }}>
+                          <span style={{
+                            background: '#ef4444',
+                            color: '#fff',
+                            borderRadius: 20,
+                            fontSize: 10,
+                            fontWeight: 800,
+                            padding: '1px 6px',
+                            minWidth: 18,
+                            textAlign: 'center',
+                            lineHeight: '16px',
+                            animation: 'pulse2 2s infinite'
+                          }}>
                             {badge > 99 ? '99+' : badge}
                           </span>
                         )}
-                        {isActive && <ChevronRight size={13} style={{ opacity: 0.6 }} />}
+                        {isActive && !badge && <ChevronRight size={13} style={{ opacity: 0.6 }} />}
                       </div>
                     )}
                   </NavLink>
@@ -96,8 +141,16 @@ const PageShell = ({ nav, children, role = 'student' }) => {
             <div style={{ padding: '10px', background: 'var(--sidebar-bg-2)', borderRadius: 10, marginBottom: 8 }}>
               <div style={{ fontSize: 13, fontWeight: 700, color: '#fff', marginBottom: 1 }}>{user?.fullName}</div>
               <div style={{ fontSize: 11, color: 'var(--sidebar-text)' }}>{user?.email}</div>
-              {user?.matricNumber && <div style={{ fontSize: 10, color: '#3b82f6', marginTop: 3, fontWeight: 600 }}>{user.matricNumber} · {user.academicLevel}L</div>}
-              {user?.employeeId && <div style={{ fontSize: 10, color: '#10b981', marginTop: 3, fontWeight: 600 }}>ID: {user.employeeId}</div>}
+              {user?.matricNumber && (
+                <div style={{ fontSize: 10, color: '#3b82f6', marginTop: 3, fontWeight: 600 }}>
+                  {user.matricNumber} · {user.academicLevel}L
+                </div>
+              )}
+              {user?.employeeId && (
+                <div style={{ fontSize: 10, color: '#10b981', marginTop: 3, fontWeight: 600 }}>
+                  ID: {user.employeeId}
+                </div>
+              )}
             </div>
             <button
               onClick={handleLogout}
@@ -107,7 +160,7 @@ const PageShell = ({ nav, children, role = 'student' }) => {
                 padding: '8px', background: 'rgba(239,68,68,0.08)',
                 border: '1px solid rgba(239,68,68,0.2)',
                 borderRadius: 8, color: '#f87171', fontSize: 13, fontWeight: 600,
-                cursor: 'pointer', transition: 'var(--transition)'
+                cursor: 'pointer', transition: 'var(--transition)', fontFamily: 'var(--font)'
               }}
               onMouseEnter={e => e.currentTarget.style.background = 'rgba(239,68,68,0.15)'}
               onMouseLeave={e => e.currentTarget.style.background = 'rgba(239,68,68,0.08)'}
@@ -162,7 +215,8 @@ const PageShell = ({ nav, children, role = 'student' }) => {
               width: 28, height: 28, borderRadius: '50%',
               background: role === 'student' ? 'var(--student-bg)' : role === 'staff' ? 'var(--staff-bg)' : 'var(--admin-bg)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 13, fontWeight: 800, color: role === 'student' ? 'var(--student-color)' : role === 'staff' ? 'var(--staff-color)' : 'var(--admin-color)'
+              fontSize: 13, fontWeight: 800,
+              color: role === 'student' ? 'var(--student-color)' : role === 'staff' ? 'var(--staff-color)' : 'var(--admin-color)'
             }}>
               {user?.fullName?.[0]}
             </div>
@@ -170,7 +224,11 @@ const PageShell = ({ nav, children, role = 'student' }) => {
               <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>
                 {user?.fullName?.split(' ')[0]}
               </div>
-              <div style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: role === 'student' ? 'var(--student-color)' : role === 'staff' ? 'var(--staff-color)' : 'var(--admin-color)' }}>
+              <div style={{
+                fontSize: 10, fontWeight: 600, textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                color: role === 'student' ? 'var(--student-color)' : role === 'staff' ? 'var(--staff-color)' : 'var(--admin-color)'
+              }}>
                 {role}
               </div>
             </div>

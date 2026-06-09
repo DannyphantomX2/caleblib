@@ -29,6 +29,15 @@ import StaffProfile from './pages/staff/StaffProfile'
 import StaffSettings from './pages/staff/StaffSettings'
 
 import AdminDashboard from './pages/admin/AdminDashboard'
+import AdminStudents from './pages/admin/AdminStudents'
+import AdminStaff from './pages/admin/AdminStaff'
+import AdminRegistry from './pages/admin/AdminRegistry'
+import AdminResources from './pages/admin/AdminResources'
+import AdminCourses from './pages/admin/AdminCourses'
+import AdminAnnouncements from './pages/admin/AdminAnnouncements'
+import AdminAuditLogs from './pages/admin/AdminAuditLogs'
+import AdminAnalytics from './pages/admin/AdminAnalytics'
+import AdminRequests from './pages/admin/AdminRequests'
 
 import {
   LayoutDashboard, BookOpen, Bookmark, Download,
@@ -192,15 +201,15 @@ const AppRoutes = () => (
         <PageShell nav={adminNav} role="admin">
           <Routes>
             <Route path="dashboard" element={<AdminDashboard />} />
-            <Route path="users/students" element={<ComingSoon title="Manage Students" />} />
-            <Route path="users/staff" element={<ComingSoon title="Manage Staff" />} />
-            <Route path="registry" element={<ComingSoon title="Student Registry" />} />
-            <Route path="resources" element={<ComingSoon title="Resource Approval" />} />
-            <Route path="courses" element={<ComingSoon title="Course Management" />} />
-            <Route path="announcements" element={<ComingSoon title="Announcements" />} />
-            <Route path="requests" element={<ComingSoon title="Requests" />} />
-            <Route path="analytics" element={<ComingSoon title="Analytics" />} />
-            <Route path="audit-logs" element={<ComingSoon title="Audit Logs" />} />
+            <Route path="users/students" element={<AdminStudents />} />
+            <Route path="users/staff" element={<AdminStaff />} />
+            <Route path="registry" element={<AdminRegistry />} />
+            <Route path="resources" element={<AdminResources />} />
+            <Route path="courses" element={<AdminCourses />} />
+            <Route path="announcements" element={<AdminAnnouncements />} />
+            <Route path="requests" element={<AdminRequests />} />
+            <Route path="analytics" element={<AdminAnalytics />} />
+            <Route path="audit-logs" element={<AdminAuditLogs />} />
             <Route path="profile" element={<ComingSoon title="Profile" />} />
             <Route path="settings" element={<ComingSoon title="Settings" />} />
             <Route index element={<Navigate to="dashboard" />} />

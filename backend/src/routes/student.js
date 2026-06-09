@@ -55,3 +55,30 @@ router.get('/announcements', protect, studentOnly, async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 });
+// Download history from audit log
+const AuditLog = require('../models/AuditLog');
+router.get('/downloads/history', protect, studentOnly, async (req, res) => {
+  try {
+    const { page = 1, limit = 20 } = req.query;
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+
+    const [logs, total] = await Promise.all([
+      AuditLog.find({
+        userId: req.user._id,
+        action: 'DOWNLOAD_RESOURCE'
+      })
+        .populate('resourceId', 'title courseCode fileFormat fileSize resourceType academicLevel')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(parseInt(limit)),
+      AuditLog.countDocuments({
+        userId: req.user._id,
+        action: 'DOWNLOAD_RESOURCE'
+      })
+    ]);
+
+    return res.json({ success: true, total, pages: Math.ceil(total / parseInt(limit)), logs });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
