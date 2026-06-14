@@ -38,6 +38,8 @@ import AdminAnnouncements from './pages/admin/AdminAnnouncements'
 import AdminAuditLogs from './pages/admin/AdminAuditLogs'
 import AdminAnalytics from './pages/admin/AdminAnalytics'
 import AdminRequests from './pages/admin/AdminRequests'
+import AdminProfile from './pages/admin/AdminProfile'
+import AdminSettings from './pages/admin/AdminSettings'
 
 import {
   LayoutDashboard, BookOpen, Bookmark, Download,
@@ -210,8 +212,8 @@ const AppRoutes = () => (
             <Route path="requests" element={<AdminRequests />} />
             <Route path="analytics" element={<AdminAnalytics />} />
             <Route path="audit-logs" element={<AdminAuditLogs />} />
-            <Route path="profile" element={<ComingSoon title="Profile" />} />
-            <Route path="settings" element={<ComingSoon title="Settings" />} />
+            <Route path="profile" element={<AdminProfile />} />
+            <Route path="settings" element={<AdminSettings />} />
             <Route index element={<Navigate to="dashboard" />} />
           </Routes>
         </PageShell>

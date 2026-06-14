@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Search, Download, X, BookOpen } from 'lucide-react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
@@ -27,12 +27,18 @@ const StudentLibrary = () => {
   })
   const [page, setPage] = useState(1)
   const [downloading, setDownloading] = useState({})
+  const [debouncedSearch, setDebouncedSearch] = useState('')
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(search), 400)
+    return () => clearTimeout(timer)
+  }, [search])
 
   const params = { page, limit: 12, ...filters }
-  if (search) params.search = search
+  if (debouncedSearch) params.search = debouncedSearch
 
   const { data, isLoading } = useQuery({
-    queryKey: ['student-resources', params],
+    queryKey: ['student-resources', { ...params, search: debouncedSearch }],
     queryFn: async () => {
       const r = await api.get('/student/resources', { params })
       return r.data

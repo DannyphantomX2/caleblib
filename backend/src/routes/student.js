@@ -82,3 +82,18 @@ router.get('/downloads/history', protect, studentOnly, async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 });
+
+// Get reviews for a resource
+router.get('/resources/:id/reviews', protect, studentOnly, async (req, res) => {
+  try {
+    const Review = require('../models/Review');
+    const reviews = await Review.find({ resource: req.params.id })
+      .populate('reviewer', 'fullName')
+      .sort({ createdAt: -1 })
+      .limit(20);
+    const myReview = await Review.findOne({ resource: req.params.id, reviewer: req.user._id });
+    return res.json({ success: true, reviews, myReview });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});

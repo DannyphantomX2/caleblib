@@ -51,3 +51,22 @@ router.put('/requests/:id', protect, staffOnly, async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 });
+// Edit own resource
+router.put('/uploads/:id', protect, staffOnly, async (req, res) => {
+  try {
+    const Resource = require('../models/Resource');
+    const { title, description, courseCode, courseTitle, tags, academicYear } = req.body;
+    const resource = await Resource.findOne({ _id: req.params.id, contributor: req.user._id });
+    if (!resource) return res.status(404).json({ error: 'Resource not found or not yours' });
+    if (title) resource.title = title;
+    if (description !== undefined) resource.description = description;
+    if (courseCode) resource.courseCode = courseCode;
+    if (courseTitle !== undefined) resource.courseTitle = courseTitle;
+    if (tags) resource.tags = tags.split(',').map(t => t.trim()).filter(Boolean);
+    if (academicYear) resource.academicYear = academicYear;
+    await resource.save();
+    return res.json({ success: true, resource });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
