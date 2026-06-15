@@ -163,12 +163,24 @@ const getUsers = async (req, res) => {
 
 const createStaff = async (req, res) => {
   try {
-    const { fullName, email, password, employeeId } = req.body;
-    if (!fullName || !email || !password || !employeeId) {
-      return res.status(400).json({ error: 'All fields required' });
+    const { fullName, email, password } = req.body;
+    if (!fullName || !email || !password) {
+      return res.status(400).json({ error: 'Name, email and password are required' });
     }
     const existing = await User.findOne({ email: email.toLowerCase() });
     if (existing) return res.status(400).json({ error: 'Email already registered' });
+
+    // Auto-generate sequential staff ID
+    const allStaff = await User.find({ role: 'faculty' }).select('employeeId');
+    let maxNum = 0;
+    allStaff.forEach(s => {
+      const match = s.employeeId?.match(/^CSC\/STAFF\/(\d+)$/);
+      if (match) {
+        const num = parseInt(match[1]);
+        if (num > maxNum) maxNum = num;
+      }
+    });
+    const employeeId = 'CSC/STAFF/' + String(maxNum + 1).padStart(3, '0');
 
     const staff = await User.create({
       fullName, email, password,

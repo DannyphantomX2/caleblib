@@ -6,18 +6,12 @@ const portals = [
     role: 'student',
     title: 'Student Portal',
     subtitle: 'Academic Resources',
-    desc: 'Browse and download course materials, lecture notes, past questions, and project archives for your level.',
+    desc: 'Browse lecture notes, past questions, project archives, and course materials organized by level.',
     icon: BookOpen,
     color: '#2563eb',
-    cardBg: '#f0f7ff',
-    border: '#c7dffe',
+    glow: 'rgba(37,99,235,0.15)',
     path: '/login/student',
-    features: [
-      'Browse resources by course & level',
-      'Download lecture notes & past questions',
-      'Bookmark materials for later',
-      'Submit resource requests'
-    ]
+    features: ['Browse resources by course & level','Download lecture notes & past questions','Bookmark materials for later','Submit resource requests']
   },
   {
     role: 'staff',
@@ -26,32 +20,20 @@ const portals = [
     desc: 'Upload course materials, track student engagement, manage requests, and communicate with students.',
     icon: Users,
     color: '#059669',
-    cardBg: '#f0fdf8',
-    border: '#bbf0dc',
+    glow: 'rgba(5,150,105,0.15)',
     path: '/login/staff',
-    features: [
-      'Upload & organise course resources',
-      'Monitor downloads and views',
-      'Respond to student requests',
-      'Post course announcements'
-    ]
+    features: ['Upload & organise course resources','Monitor downloads and views','Respond to student requests','Post course announcements']
   },
   {
     role: 'admin',
     title: 'Admin Panel',
     subtitle: 'System Administration',
-    desc: 'Manage users and access, approve uploaded content, review audit logs, and oversee system operations.',
+    desc: 'Manage users and access, approve uploaded content, review audit logs, and oversee operations.',
     icon: Shield,
     color: '#b45309',
-    cardBg: '#fefce8',
-    border: '#fde68a',
+    glow: 'rgba(180,83,9,0.15)',
     path: '/login/admin',
-    features: [
-      'Manage student & staff accounts',
-      'Approve or reject resource uploads',
-      'Review full audit trails',
-      'System analytics & reporting'
-    ]
+    features: ['Manage student & staff accounts','Approve or reject uploads','Review full audit trails','System analytics & reporting']
   }
 ]
 
@@ -59,178 +41,144 @@ const LandingPage = () => {
   const navigate = useNavigate()
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f1f5f9', fontFamily: "'Onest', sans-serif" }}>
+    <div style={{ minHeight: '100vh', fontFamily: "'Onest', sans-serif", position: 'relative', overflow: 'hidden' }}>
 
-      {/* Top bar */}
-      <header style={{
-        background: '#0f1b2d',
-        borderBottom: '1px solid #1e3356',
-        height: 56,
-        display: 'flex', alignItems: 'center',
-        padding: '0 32px', gap: 14
-      }}>
-        <div style={{
-          width: 30, height: 30, borderRadius: 7,
-          background: '#2563eb',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          flexShrink: 0
+      {/* Full page gradient background */}
+      <div style={{
+        position: 'fixed', inset: 0, zIndex: 0,
+        background: 'linear-gradient(135deg, #0a1628 0%, #0d2144 35%, #081830 65%, #0a1f3a 100%)'
+      }} />
+      {/* Floating blobs */}
+      <div style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none' }}>
+        <div style={{ position: 'absolute', top: '-10%', left: '-5%', width: 600, height: 600, borderRadius: '50%', background: 'radial-gradient(circle, rgba(59,130,246,0.18) 0%, transparent 70%)' }} />
+        <div style={{ position: 'absolute', bottom: '-10%', right: '-5%', width: 500, height: 500, borderRadius: '50%', background: 'radial-gradient(circle, rgba(16,185,129,0.14) 0%, transparent 70%)' }} />
+        <div style={{ position: 'absolute', top: '40%', right: '20%', width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(circle, rgba(139,92,246,0.12) 0%, transparent 70%)' }} />
+      </div>
+
+      <div style={{ position: 'relative', zIndex: 1 }}>
+        {/* Header */}
+        <header style={{
+          padding: '0 40px', height: 58,
+          display: 'flex', alignItems: 'center', gap: 14,
+          background: 'rgba(255,255,255,0.05)',
+          backdropFilter: 'blur(16px)',
+          borderBottom: '1px solid rgba(255,255,255,0.08)',
+          boxShadow: 'inset 0 -1px 0 rgba(255,255,255,0.05)'
         }}>
-          <span style={{ fontSize: 15, fontWeight: 900, color: '#fff', letterSpacing: '-0.03em' }}>C</span>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-          <span style={{ fontSize: 14, fontWeight: 700, color: '#e2e8f0', letterSpacing: '-0.01em' }}>
-            CalebLib
-          </span>
-          <span style={{ fontSize: 12, color: '#3a506b' }}>·</span>
-          <span style={{ fontSize: 12, color: '#64748b' }}>
-            Caleb University Department of Computer Science
-          </span>
-        </div>
-        <div style={{ flex: 1 }} />
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: '#3a506b' }}>
-          <Lock size={11} />
-          Secure Access
-        </div>
-      </header>
+          <div style={{ width: 32, height: 32, borderRadius: 9, background: 'linear-gradient(145deg, rgba(255,255,255,0.18) 0%, transparent 50%), linear-gradient(135deg, #3b82f6, #1d4ed8)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(59,130,246,0.4)', border: '1px solid rgba(255,255,255,0.2)' }}>
+            <span style={{ fontSize: 15, fontWeight: 900, color: '#fff' }}>C</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+            <span style={{ fontSize: 15, fontWeight: 800, color: '#fff', letterSpacing: '-0.02em' }}>CalebLib</span>
+            <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)' }}>·</span>
+            <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>Caleb University CS Department</span>
+          </div>
+          <div style={{ flex: 1 }} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: 'rgba(255,255,255,0.35)' }}>
+            <Lock size={10} />
+            Restricted System
+          </div>
+        </header>
 
-      {/* Page content */}
-      <div style={{ maxWidth: 960, margin: '0 auto', padding: '52px 28px' }}>
-
-        {/* Header block */}
-        <div style={{ marginBottom: 40 }}>
-          <p style={{
-            fontSize: 11, fontWeight: 700,
-            color: '#2563eb', letterSpacing: '0.1em',
-            textTransform: 'uppercase', marginBottom: 10
-          }}>
+        {/* Hero */}
+        <div style={{ textAlign: 'center', padding: '64px 40px 52px' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '5px 14px', background: 'rgba(59,130,246,0.15)', backdropFilter: 'blur(8px)', border: '1px solid rgba(59,130,246,0.3)', borderRadius: 20, fontSize: 11, fontWeight: 700, color: '#93c5fd', letterSpacing: '0.07em', textTransform: 'uppercase', marginBottom: 24 }}>
+            <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#3b82f6', animation: 'pulse2 2s infinite' }} />
             Resource Library System
-          </p>
-          <h1 style={{
-            fontSize: 28, fontWeight: 800,
-            color: '#0f172a', letterSpacing: '-0.02em',
-            marginBottom: 10, lineHeight: 1.2
-          }}>
+          </div>
+          <h1 style={{ fontSize: 46, fontWeight: 900, color: '#fff', letterSpacing: '-0.04em', lineHeight: 1.1, maxWidth: 580, margin: '0 auto 16px' }}>
             Select Your Access Portal
           </h1>
-          <p style={{ fontSize: 14, color: '#64748b', maxWidth: 480, lineHeight: 1.65 }}>
-            Access is restricted to registered members of the Caleb University Computer Science Department. Choose the portal that matches your role.
+          <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.5)', maxWidth: 460, margin: '0 auto', lineHeight: 1.7 }}>
+            Access is restricted to registered members of the Caleb University Computer Science Department.
           </p>
         </div>
 
-        {/* Portal cards */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20, marginBottom: 48 }}>
-          {portals.map((portal) => {
-            const Icon = portal.icon
-            return (
+        {/* Glass portal cards */}
+        <div style={{ maxWidth: 1060, margin: '0 auto', padding: '0 32px 60px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 22 }}>
+            {portals.map(({ role, title, subtitle, desc, icon: Icon, color, glow, path, features }) => (
               <div
-                key={portal.role}
-                onClick={() => navigate(portal.path)}
+                key={role}
+                onClick={() => navigate(path)}
                 style={{
-                  background: '#fff',
-                  borderRadius: 12,
-                  border: '1.5px solid #e2e8f0',
+                  background: 'rgba(255,255,255,0.07)',
+                  backdropFilter: 'blur(24px) saturate(160%)',
+                  WebkitBackdropFilter: 'blur(24px) saturate(160%)',
+                  border: '1px solid rgba(255,255,255,0.12)',
+                  borderRadius: 20,
                   overflow: 'hidden',
-                  display: 'flex', flexDirection: 'column',
                   cursor: 'pointer',
-                  transition: 'border-color 0.15s, box-shadow 0.15s, transform 0.15s',
-                  boxShadow: '0 1px 4px rgba(0,0,0,0.05)'
+                  transition: 'all 0.25s cubic-bezier(0.34,1.4,0.64,1)',
+                  boxShadow: `0 8px 32px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)`
                 }}
                 onMouseEnter={e => {
-                  e.currentTarget.style.borderColor = portal.color
-                  e.currentTarget.style.boxShadow = `0 6px 24px rgba(0,0,0,0.08)`
-                  e.currentTarget.style.transform = 'translateY(-2px)'
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.11)'
+                  e.currentTarget.style.border = `1px solid ${color}50`
+                  e.currentTarget.style.transform = 'translateY(-6px) scale(1.01)'
+                  e.currentTarget.style.boxShadow = `0 20px 50px rgba(0,0,0,0.3), 0 0 40px ${glow}, inset 0 1px 0 rgba(255,255,255,0.15)`
                 }}
                 onMouseLeave={e => {
-                  e.currentTarget.style.borderColor = '#e2e8f0'
-                  e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,0.05)'
-                  e.currentTarget.style.transform = 'none'
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.07)'
+                  e.currentTarget.style.border = '1px solid rgba(255,255,255,0.12)'
+                  e.currentTarget.style.transform = ''
+                  e.currentTarget.style.boxShadow = '0 8px 32px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)'
                 }}
               >
-                {/* Top strip */}
-                <div style={{
-                  background: portal.cardBg,
-                  borderBottom: `1px solid ${portal.border}`,
-                  padding: '22px 22px 18px'
-                }}>
-                  <div style={{
-                    width: 44, height: 44, borderRadius: 10,
-                    background: '#fff',
-                    border: `1px solid ${portal.border}`,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    marginBottom: 14
-                  }}>
-                    <Icon size={22} color={portal.color} strokeWidth={1.8} />
+                {/* Top glow accent */}
+                <div style={{ height: 2, background: `linear-gradient(90deg, transparent, ${color}80, transparent)` }} />
+
+                <div style={{ padding: '26px 26px 20px' }}>
+                  <div style={{ width: 50, height: 50, borderRadius: 14, background: `rgba(255,255,255,0.08)`, border: `1px solid ${color}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 18, boxShadow: `0 4px 16px ${glow}, inset 0 1px 0 rgba(255,255,255,0.1)` }}>
+                    <Icon size={24} color={color} />
                   </div>
-                  <div style={{ fontSize: 10, fontWeight: 700, color: portal.color, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 4 }}>
-                    {portal.subtitle}
-                  </div>
-                  <h2 style={{ fontSize: 17, fontWeight: 800, color: '#0f172a', letterSpacing: '-0.02em', marginBottom: 6 }}>
-                    {portal.title}
-                  </h2>
-                  <p style={{ fontSize: 13, color: '#64748b', lineHeight: 1.55 }}>
-                    {portal.desc}
-                  </p>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: color, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 5 }}>{subtitle}</div>
+                  <h2 style={{ fontSize: 19, fontWeight: 800, color: '#fff', letterSpacing: '-0.02em', marginBottom: 10 }}>{title}</h2>
+                  <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', lineHeight: 1.6 }}>{desc}</p>
                 </div>
 
-                {/* Features */}
-                <div style={{ padding: '16px 22px', flex: 1 }}>
+                <div style={{ padding: '0 26px 20px' }}>
                   <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 7 }}>
-                    {portal.features.map(f => (
-                      <li key={f} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 13, color: '#475569', lineHeight: 1.4 }}>
-                        <span style={{ width: 5, height: 5, borderRadius: '50%', background: portal.color, flexShrink: 0, marginTop: 5 }} />
+                    {features.map(f => (
+                      <li key={f} style={{ display: 'flex', alignItems: 'center', gap: 9, fontSize: 13, color: 'rgba(255,255,255,0.55)' }}>
+                        <span style={{ width: 5, height: 5, borderRadius: '50%', background: color, flexShrink: 0, boxShadow: `0 0 6px ${color}` }} />
                         {f}
                       </li>
                     ))}
                   </ul>
                 </div>
 
-                {/* Button */}
-                <div style={{ padding: '12px 22px 20px' }}>
+                <div style={{ padding: '0 20px 22px' }}>
                   <div style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    padding: '9px 14px',
-                    background: portal.color,
-                    borderRadius: 8,
-                    color: '#fff', fontSize: 13, fontWeight: 600
+                    padding: '10px 16px',
+                    background: `linear-gradient(145deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.05) 50%, transparent 100%), ${color}`,
+                    borderRadius: 11, color: '#fff', fontSize: 13.5, fontWeight: 700,
+                    border: '1px solid rgba(255,255,255,0.25)',
+                    boxShadow: `0 4px 14px ${glow}90, inset 0 1px 0 rgba(255,255,255,0.2)`
                   }}>
-                    <span>Sign in to {portal.title}</span>
-                    <ArrowRight size={15} />
+                    <span>Access {title}</span>
+                    <ArrowRight size={16} />
                   </div>
                 </div>
               </div>
-            )
-          })}
-        </div>
-
-        {/* Notice bar */}
-        <div style={{
-          display: 'flex', alignItems: 'flex-start', gap: 12,
-          padding: '14px 18px',
-          background: '#fff',
-          border: '1px solid #e2e8f0',
-          borderLeft: '3px solid #2563eb',
-          borderRadius: 8,
-          marginBottom: 28
-        }}>
-          <Lock size={14} color="#2563eb" style={{ marginTop: 1, flexShrink: 0 }} />
-          <div>
-            <p style={{ fontSize: 13, color: '#0f172a', fontWeight: 600, marginBottom: 2 }}>
-              Restricted System
-            </p>
-            <p style={{ fontSize: 12, color: '#64748b', lineHeight: 1.6 }}>
-              This portal is exclusively for registered students, faculty, and administrators of the Caleb University Computer Science Department. All login attempts, uploads, downloads, and administrative actions are recorded in the system audit log. Unauthorised access attempts are prohibited under institutional policy.
-            </p>
+            ))}
           </div>
-        </div>
 
-        {/* Footer */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 12, color: '#94a3b8' }}>
-          <span>© 2026 Caleb University · Department of Computer Science</span>
-          <a href="/privacy-policy" style={{ color: '#2563eb', fontWeight: 500 }}>Privacy Policy</a>
+          {/* Bottom notice */}
+          <div style={{ textAlign: 'center', marginTop: 44 }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 18px', background: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, fontSize: 12, color: 'rgba(255,255,255,0.35)', marginBottom: 10 }}>
+              <Lock size={11} />
+              All activity is logged and monitored. Unauthorised access is prohibited.
+            </div>
+            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.2)' }}>
+              © 2026 Caleb University · CS Department · {' '}
+              <a href="/privacy-policy" style={{ color: 'rgba(59,130,246,0.6)', fontWeight: 500 }}>Privacy Policy</a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   )
 }
-
 export default LandingPage

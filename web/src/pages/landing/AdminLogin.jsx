@@ -20,51 +20,58 @@ const AdminLogin = () => {
       await login(form.email, form.password, 'admin')
       toast.success('Admin access granted')
       navigate('/admin/dashboard')
-    } catch (err) {
-      toast.error(err.response?.data?.error || 'Access denied')
-    } finally { setLoading(false) }
+    } catch (err) { toast.error(err.response?.data?.error || 'Access denied') }
+    finally { setLoading(false) }
   }
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', background: '#f8fafc' }}>
-      <div style={{ width: 420, background: '#0f1b2d', display: 'flex', flexDirection: 'column', padding: '40px 36px', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', top: '-60px', right: '-60px', width: 250, height: 250, borderRadius: '50%', background: 'rgba(245,158,11,0.06)' }} />
-        <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 7, color: '#94b4d1', fontSize: 13, marginBottom: 48, textDecoration: 'none' }}>
-          <ArrowLeft size={14} /> Back
-        </Link>
-        <div style={{ flex: 1 }}>
-          <div style={{ width: 56, height: 56, borderRadius: 16, background: 'rgba(245,158,11,0.15)', border: '1px solid rgba(245,158,11,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 24 }}>
-            <Shield size={28} color="#f59e0b" />
-          </div>
-          <h1 style={{ fontSize: 30, fontWeight: 900, color: '#fff', letterSpacing: '-0.03em', marginBottom: 12 }}>Admin Panel</h1>
-          <p style={{ fontSize: 14, color: '#94b4d1', lineHeight: 1.7, marginBottom: 36 }}>
-            System administration — manage users, resources, departments, and maintain full institutional oversight.
-          </p>
-          <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10, padding: '12px 16px' }}>
-            <p style={{ fontSize: 12, color: '#fca5a5', lineHeight: 1.6 }}>
-              <strong>Restricted Access.</strong> Admin accounts are manually seeded. All login attempts are logged and monitored.
-            </p>
-          </div>
-        </div>
-        <div style={{ fontSize: 11, color: '#3a506b' }}>Caleb University · CS Dept · 2026</div>
+    <div style={{ minHeight: '100vh', fontFamily: "'Onest', sans-serif", position: 'relative', overflow: 'hidden' }}>
+      <div style={{ position: 'fixed', inset: 0, zIndex: 0, background: 'linear-gradient(135deg, #0d0800 0%, #1c1100 40%, #110d00 100%)' }} />
+      <div style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none' }}>
+        <div style={{ position: 'absolute', top: '-10%', left: '-8%', width: 550, height: 550, borderRadius: '50%', background: 'radial-gradient(circle, rgba(180,83,9,0.22) 0%, transparent 65%)' }} />
+        <div style={{ position: 'absolute', bottom: '-10%', right: '-5%', width: 380, height: 380, borderRadius: '50%', background: 'radial-gradient(circle, rgba(245,158,11,0.14) 0%, transparent 65%)' }} />
+        <div style={{ position: 'absolute', top: '50%', right: '30%', width: 200, height: 200, borderRadius: '50%', background: 'radial-gradient(circle, rgba(239,68,68,0.08) 0%, transparent 65%)' }} />
       </div>
 
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 40 }}>
-        <div style={{ width: '100%', maxWidth: 400 }}>
-          <h2 style={{ fontSize: 26, fontWeight: 800, marginBottom: 6, letterSpacing: '-0.02em' }}>Admin Sign In</h2>
-          <p style={{ fontSize: 14, color: '#64748b', marginBottom: 32 }}>Restricted — administrator access only</p>
-          <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-            <Field label="Admin Email" type="email" value={form.email} onChange={set('email')} placeholder="admin@calebuniversity.edu.ng" icon={<Mail size={15} />} required />
-            <Field label="Password" type="password" value={form.password} onChange={set('password')} placeholder="Administrator password" icon={<Lock size={15} />} required />
-            <Btn type="submit" fullWidth size="lg" style={{ background: '#f59e0b', color: '#fff' }} loading={loading}>
-              Access Admin Panel
-            </Btn>
-          </form>
-          <p style={{ textAlign: 'center', marginTop: 24, fontSize: 12, color: '#94a3b8' }}>
-            <Link to="/login/student" style={{ color: '#3b82f6', fontWeight: 600 }}>Student login</Link>
-            {' '}·{' '}
-            <Link to="/login/staff" style={{ color: '#10b981', fontWeight: 600 }}>Staff login</Link>
-          </p>
+      <div style={{ position: 'relative', zIndex: 1, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 24px' }}>
+        <div style={{ width: '100%', maxWidth: 860, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, alignItems: 'center' }}>
+
+          <div style={{ background: 'rgba(255,255,255,0.04)', backdropFilter: 'blur(24px) saturate(150%)', WebkitBackdropFilter: 'blur(24px) saturate(150%)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 24, padding: '44px 40px', boxShadow: '0 8px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06)' }}>
+            <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: 'rgba(255,255,255,0.35)', fontSize: 13, marginBottom: 44, textDecoration: 'none', transition: 'color 0.15s' }}
+              onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.65)'}
+              onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.35)'}>
+              <ArrowLeft size={13} /> Back
+            </Link>
+            <div style={{ width: 56, height: 56, borderRadius: 17, background: 'rgba(180,83,9,0.18)', border: '1px solid rgba(245,158,11,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 24, boxShadow: '0 0 30px rgba(180,83,9,0.25)' }}>
+              <Shield size={28} color="#fbbf24" />
+            </div>
+            <h1 style={{ fontSize: 28, fontWeight: 900, color: '#fff', letterSpacing: '-0.03em', marginBottom: 12 }}>Admin Panel</h1>
+            <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.4)', lineHeight: 1.75, marginBottom: 36 }}>
+              Full system control — manage users and resources, review audit trails, and maintain institutional oversight.
+            </p>
+            <div style={{ padding: '14px 16px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)', borderRadius: 10 }}>
+              <p style={{ fontSize: 12, color: 'rgba(252,165,165,0.75)', lineHeight: 1.6 }}>
+                <strong style={{ color: 'rgba(252,165,165,0.9)' }}>Restricted.</strong> Admin accounts are manually provisioned. All login attempts — successful or otherwise — are recorded in the system audit log with IP address and timestamp.
+              </p>
+            </div>
+          </div>
+
+          <div style={{ background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(28px) saturate(200%)', WebkitBackdropFilter: 'blur(28px) saturate(200%)', border: '1px solid rgba(255,255,255,0.75)', borderRadius: 24, padding: '44px 36px', boxShadow: '0 24px 80px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,1)' }}>
+            <h2 style={{ fontSize: 24, fontWeight: 800, marginBottom: 6, letterSpacing: '-0.02em' }}>Admin Sign In</h2>
+            <p style={{ fontSize: 13.5, color: '#64748b', marginBottom: 30 }}>Restricted — administrator access only</p>
+            <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+              <Field label="Admin Email" type="email" value={form.email} onChange={set('email')} placeholder="admin@calebuniversity.edu.ng" icon={<Mail size={15} />} required />
+              <Field label="Password" type="password" value={form.password} onChange={set('password')} placeholder="Administrator password" icon={<Lock size={15} />} required />
+              <Btn type="submit" fullWidth size="lg" loading={loading} style={{ background: 'linear-gradient(145deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.05) 50%, transparent 100%), linear-gradient(135deg, #fbbf24, #d97706)', color: '#1c1100', boxShadow: '0 4px 14px rgba(180,83,9,0.45), inset 0 1px 0 rgba(255,255,255,0.3)' }}>
+                Access Admin Panel
+              </Btn>
+            </form>
+            <p style={{ textAlign: 'center', marginTop: 22, fontSize: 12, color: '#94a3b8' }}>
+              <Link to="/login/student" style={{ color: '#2563eb', fontWeight: 600 }}>Student</Link>
+              {' · '}
+              <Link to="/login/staff" style={{ color: '#059669', fontWeight: 600 }}>Staff</Link>
+            </p>
+          </div>
         </div>
       </div>
     </div>

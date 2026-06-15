@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Users, Search, UserX, UserCheck, Trash2, Key, Plus } from 'lucide-react'
+import { Search, UserX, UserCheck, Trash2, Key, Plus } from 'lucide-react'
 import api from '../../services/api'
 import Badge from '../../components/common/Badge'
 import Btn from '../../components/common/Btn'
@@ -19,7 +19,7 @@ const AdminStaff = () => {
   const [reason, setReason] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [showCreate, setShowCreate] = useState(false)
-  const [createForm, setCreateForm] = useState({ fullName: '', email: '', password: '', employeeId: '' })
+  const [createForm, setCreateForm] = useState({ fullName: '', email: '', password: '' })
 
   const { data, isLoading } = useQuery({
     queryKey: ['admin-staff', search, page],
@@ -33,11 +33,11 @@ const AdminStaff = () => {
 
   const createMutation = useMutation({
     mutationFn: async (d) => { const r = await api.post('/admin/users/staff', d); return r.data },
-    onSuccess: () => {
-      toast.success('Staff account created')
+    onSuccess: (data) => {
+      toast.success(`Staff account created · ID: ${data.user.employeeId}`)
       queryClient.invalidateQueries(['admin-staff'])
       setShowCreate(false)
-      setCreateForm({ fullName: '', email: '', password: '', employeeId: '' })
+      setCreateForm({ fullName: '', email: '', password: '' })
     },
     onError: e => toast.error(e.response?.data?.error || 'Failed')
   })
@@ -74,7 +74,7 @@ const AdminStaff = () => {
         <div>
           <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 4 }}>Manage Staff</h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>
-            {data?.total ? `${data.total} staff members` : 'All faculty members'}
+            {data?.total ? `${data.total} staff members` : 'All faculty members'} · IDs auto-assigned as CSC/STAFF/XXX
           </p>
         </div>
         <Btn onClick={() => setShowCreate(true)} icon={<Plus size={15} />}>Create Staff Account</Btn>
@@ -111,7 +111,11 @@ const AdminStaff = () => {
                   <div style={{ fontWeight: 700 }}>{u.fullName}</div>
                   <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{u.email}</div>
                 </td>
-                <td style={{ padding: '12px 16px', fontFamily: 'var(--font-mono)', fontSize: 12 }}>{u.employeeId || '—'}</td>
+                <td style={{ padding: '12px 16px' }}>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, background: 'var(--page-bg-2)', padding: '3px 8px', borderRadius: 6, border: '1px solid var(--card-border)', fontWeight: 600, color: 'var(--staff-color)' }}>
+                    {u.employeeId || '—'}
+                  </span>
+                </td>
                 <td style={{ padding: '12px 16px' }}>
                   <Badge color={u.isSuspended ? 'red' : 'green'} dot>{u.isSuspended ? 'Suspended' : 'Active'}</Badge>
                 </td>
@@ -120,9 +124,8 @@ const AdminStaff = () => {
                 <td style={{ padding: '12px 16px' }}>
                   <div style={{ display: 'flex', gap: 6 }}>
                     {u.isSuspended ? (
-                      <Btn size="xs" onClick={() => unsuspendMutation.mutate(u._id)}
-                        loading={unsuspendMutation.isPending} icon={<UserCheck size={12} />}
-                        style={{ background: '#10b981', color: '#fff' }}>Restore</Btn>
+                      <Btn size="xs" onClick={() => unsuspendMutation.mutate(u._id)} loading={unsuspendMutation.isPending}
+                        icon={<UserCheck size={12} />} style={{ background: '#10b981', color: '#fff' }}>Restore</Btn>
                     ) : (
                       <Btn size="xs" variant="ghost" onClick={() => openAction(u, 'suspend')}
                         icon={<UserX size={12} />} style={{ color: '#f59e0b' }}>Suspend</Btn>
@@ -147,62 +150,45 @@ const AdminStaff = () => {
         </div>
       )}
 
-      {/* Create staff modal */}
+      {/* Create staff — no employeeId field, auto-assigned */}
       <Modal open={showCreate} onClose={() => setShowCreate(false)} title="Create Staff Account"
         footer={
           <>
             <Btn variant="secondary" onClick={() => setShowCreate(false)}>Cancel</Btn>
             <Btn loading={createMutation.isPending} onClick={() => {
-              const { fullName, email, password, employeeId } = createForm
-              if (!fullName || !email || !password || !employeeId) return toast.error('All fields required')
+              const { fullName, email, password } = createForm
+              if (!fullName || !email || !password) return toast.error('All fields required')
               if (password.length < 6) return toast.error('Password min 6 characters')
               createMutation.mutate(createForm)
             }}>Create Account</Btn>
           </>
         }>
+        <div style={{ marginBottom: 16, padding: '10px 14px', background: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: 8 }}>
+          <p style={{ fontSize: 12, color: '#065f46', fontWeight: 500 }}>
+            🔢 Employee ID is auto-assigned sequentially (CSC/STAFF/001, CSC/STAFF/002…)
+          </p>
+        </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           <Field label="Full Name" value={createForm.fullName} onChange={e => setCreateForm(p => ({ ...p, fullName: e.target.value }))} placeholder="Dr. John Doe" required />
           <Field label="Email" type="email" value={createForm.email} onChange={e => setCreateForm(p => ({ ...p, email: e.target.value }))} placeholder="staff@calebuniversity.edu.ng" required />
-          <Field label="Employee ID" value={createForm.employeeId} onChange={e => setCreateForm(p => ({ ...p, employeeId: e.target.value }))} placeholder="CSC/STAFF/002" required />
           <Field label="Initial Password" type="password" value={createForm.password} onChange={e => setCreateForm(p => ({ ...p, password: e.target.value }))} placeholder="Min 6 characters" required hint="Staff should change this on first login" />
         </div>
       </Modal>
 
-      {/* Suspend modal */}
       <Modal open={action === 'suspend'} onClose={() => { setAction(null); setReason('') }} title="Suspend Staff"
-        footer={
-          <>
-            <Btn variant="secondary" onClick={() => { setAction(null); setReason('') }}>Cancel</Btn>
-            <Btn variant="danger" loading={suspendMutation.isPending} onClick={() => suspendMutation.mutate({ id: selected._id, reason })}>Suspend</Btn>
-          </>
-        }>
+        footer={<><Btn variant="secondary" onClick={() => { setAction(null); setReason('') }}>Cancel</Btn><Btn variant="danger" loading={suspendMutation.isPending} onClick={() => suspendMutation.mutate({ id: selected._id, reason })}>Suspend</Btn></>}>
         <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginBottom: 16 }}>Suspending <strong>{selected?.fullName}</strong></p>
         <Field label="Reason" value={reason} onChange={e => setReason(e.target.value)} placeholder="Reason for suspension" />
       </Modal>
 
-      {/* Reset password modal */}
       <Modal open={action === 'password'} onClose={() => { setAction(null); setNewPassword('') }} title="Reset Password"
-        footer={
-          <>
-            <Btn variant="secondary" onClick={() => { setAction(null); setNewPassword('') }}>Cancel</Btn>
-            <Btn loading={resetPasswordMutation.isPending} onClick={() => {
-              if (!newPassword || newPassword.length < 6) return toast.error('Min 6 characters')
-              resetPasswordMutation.mutate({ id: selected._id, newPassword })
-            }}>Reset Password</Btn>
-          </>
-        }>
+        footer={<><Btn variant="secondary" onClick={() => { setAction(null); setNewPassword('') }}>Cancel</Btn><Btn loading={resetPasswordMutation.isPending} onClick={() => { if (!newPassword || newPassword.length < 6) return toast.error('Min 6 characters'); resetPasswordMutation.mutate({ id: selected._id, newPassword }) }}>Reset</Btn></>}>
         <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginBottom: 16 }}>Reset password for <strong>{selected?.fullName}</strong></p>
         <Field label="New Password" type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="Min 6 characters" required />
       </Modal>
 
-      {/* Delete modal */}
       <Modal open={action === 'delete'} onClose={() => setAction(null)} title="Delete Staff"
-        footer={
-          <>
-            <Btn variant="secondary" onClick={() => setAction(null)}>Cancel</Btn>
-            <Btn variant="danger" loading={deleteMutation.isPending} onClick={() => deleteMutation.mutate(selected._id)}>Delete Permanently</Btn>
-          </>
-        }>
+        footer={<><Btn variant="secondary" onClick={() => setAction(null)}>Cancel</Btn><Btn variant="danger" loading={deleteMutation.isPending} onClick={() => deleteMutation.mutate(selected._id)}>Delete Permanently</Btn></>}>
         <div style={{ padding: '12px 16px', background: '#fef2f2', borderRadius: 8, border: '1px solid #fecaca', marginBottom: 16 }}>
           <p style={{ fontSize: 13, color: '#991b1b', fontWeight: 600 }}>⚠️ This cannot be undone.</p>
         </div>

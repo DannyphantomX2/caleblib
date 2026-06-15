@@ -20,54 +20,57 @@ const StaffLogin = () => {
       await login(form.email, form.password, 'faculty')
       toast.success('Welcome back!')
       navigate('/staff/dashboard')
-    } catch (err) {
-      toast.error(err.response?.data?.error || 'Login failed')
-    } finally { setLoading(false) }
+    } catch (err) { toast.error(err.response?.data?.error || 'Login failed') }
+    finally { setLoading(false) }
   }
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', background: '#f8fafc' }}>
-      <div style={{ width: 420, background: '#0f1b2d', display: 'flex', flexDirection: 'column', padding: '40px 36px', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', top: '-60px', right: '-60px', width: 250, height: 250, borderRadius: '50%', background: 'rgba(16,185,129,0.06)' }} />
-        <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 7, color: '#94b4d1', fontSize: 13, marginBottom: 48, textDecoration: 'none' }}>
-          <ArrowLeft size={14} /> Back
-        </Link>
-        <div style={{ flex: 1 }}>
-          <div style={{ width: 56, height: 56, borderRadius: 16, background: 'rgba(16,185,129,0.15)', border: '1px solid rgba(16,185,129,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 24 }}>
-            <Users size={28} color="#10b981" />
-          </div>
-          <h1 style={{ fontSize: 30, fontWeight: 900, color: '#fff', letterSpacing: '-0.03em', marginBottom: 12 }}>Staff Portal</h1>
-          <p style={{ fontSize: 14, color: '#94b4d1', lineHeight: 1.7, marginBottom: 36 }}>
-            Upload resources, manage course materials, view engagement analytics, and respond to student requests.
-          </p>
-          <div style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 10, padding: '12px 16px' }}>
-            <p style={{ fontSize: 12, color: '#6ee7b7', lineHeight: 1.6 }}>
-              <strong>Note:</strong> Staff accounts are created exclusively by system administrators. Contact your department admin if you don't have access.
-            </p>
-          </div>
-        </div>
-        <div style={{ fontSize: 11, color: '#3a506b' }}>Caleb University · CS Dept · 2026</div>
+    <div style={{ minHeight: '100vh', fontFamily: "'Onest', sans-serif", position: 'relative', overflow: 'hidden' }}>
+      <div style={{ position: 'fixed', inset: 0, zIndex: 0, background: 'linear-gradient(135deg, #031510 0%, #071f18 40%, #041410 100%)' }} />
+      <div style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none' }}>
+        <div style={{ position: 'absolute', top: '-10%', left: '-8%', width: 550, height: 550, borderRadius: '50%', background: 'radial-gradient(circle, rgba(5,150,105,0.22) 0%, transparent 65%)' }} />
+        <div style={{ position: 'absolute', bottom: '-10%', right: '-5%', width: 380, height: 380, borderRadius: '50%', background: 'radial-gradient(circle, rgba(16,185,129,0.14) 0%, transparent 65%)' }} />
       </div>
 
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 40 }}>
-        <div style={{ width: '100%', maxWidth: 400 }}>
-          <h2 style={{ fontSize: 26, fontWeight: 800, marginBottom: 6, letterSpacing: '-0.02em' }}>Staff Sign In</h2>
-          <p style={{ fontSize: 14, color: '#64748b', marginBottom: 32 }}>Sign in with your institutional credentials</p>
-          <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-            <Field label="Email Address" type="email" value={form.email} onChange={set('email')} placeholder="staff@calebuniversity.edu.ng" icon={<Mail size={15} />} required />
-            <Field label="Password" type="password" value={form.password} onChange={set('password')} placeholder="Enter your password" icon={<Lock size={15} />} required />
-            <Btn type="submit" fullWidth size="lg" variant="success" loading={loading} style={{ background: '#10b981' }}
-              onMouseEnter={e => e.currentTarget.style.background = '#059669'}
-              onMouseLeave={e => e.currentTarget.style.background = '#10b981'}
-            >
-              Sign In to Staff Portal
-            </Btn>
-          </form>
-          <p style={{ textAlign: 'center', marginTop: 24, fontSize: 12, color: '#94a3b8' }}>
-            <Link to="/login/student" style={{ color: '#3b82f6', fontWeight: 600 }}>Student login</Link>
-            {' '}·{' '}
-            <Link to="/login/admin" style={{ color: '#f59e0b', fontWeight: 600 }}>Admin login</Link>
-          </p>
+      <div style={{ position: 'relative', zIndex: 1, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 24px' }}>
+        <div style={{ width: '100%', maxWidth: 860, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, alignItems: 'center' }}>
+
+          <div style={{ background: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(24px) saturate(150%)', WebkitBackdropFilter: 'blur(24px) saturate(150%)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 24, padding: '44px 40px', boxShadow: '0 8px 40px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.07)' }}>
+            <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: 'rgba(255,255,255,0.38)', fontSize: 13, marginBottom: 44, textDecoration: 'none', transition: 'color 0.15s' }}
+              onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.7)'}
+              onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.38)'}>
+              <ArrowLeft size={13} /> Back
+            </Link>
+            <div style={{ width: 56, height: 56, borderRadius: 17, background: 'rgba(5,150,105,0.18)', border: '1px solid rgba(5,150,105,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 24, boxShadow: '0 0 30px rgba(5,150,105,0.2)' }}>
+              <Users size={28} color="#34d399" />
+            </div>
+            <h1 style={{ fontSize: 28, fontWeight: 900, color: '#fff', letterSpacing: '-0.03em', marginBottom: 12 }}>Staff Portal</h1>
+            <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.42)', lineHeight: 1.75, marginBottom: 36 }}>
+              Upload course materials, track student engagement, and manage academic resources for your courses.
+            </p>
+            <div style={{ padding: '14px 16px', background: 'rgba(5,150,105,0.1)', border: '1px solid rgba(5,150,105,0.25)', borderRadius: 10 }}>
+              <p style={{ fontSize: 12, color: 'rgba(110,231,183,0.7)', lineHeight: 1.6 }}>
+                <strong style={{ color: 'rgba(110,231,183,0.9)' }}>Note:</strong> Staff accounts are created exclusively by the system administrator. Contact your department admin if you need access.
+              </p>
+            </div>
+          </div>
+
+          <div style={{ background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(28px) saturate(200%)', WebkitBackdropFilter: 'blur(28px) saturate(200%)', border: '1px solid rgba(255,255,255,0.75)', borderRadius: 24, padding: '44px 36px', boxShadow: '0 24px 80px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,1)' }}>
+            <h2 style={{ fontSize: 24, fontWeight: 800, marginBottom: 6, letterSpacing: '-0.02em' }}>Staff Sign In</h2>
+            <p style={{ fontSize: 13.5, color: '#64748b', marginBottom: 30 }}>Sign in with your institutional credentials</p>
+            <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+              <Field label="Email Address" type="email" value={form.email} onChange={set('email')} placeholder="staff@calebuniversity.edu.ng" icon={<Mail size={15} />} required />
+              <Field label="Password" type="password" value={form.password} onChange={set('password')} placeholder="Enter your password" icon={<Lock size={15} />} required />
+              <Btn type="submit" fullWidth size="lg" loading={loading} style={{ background: 'linear-gradient(145deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.05) 50%, transparent 100%), linear-gradient(135deg, #34d399, #059669)', boxShadow: '0 4px 14px rgba(5,150,105,0.45), inset 0 1px 0 rgba(255,255,255,0.22)' }}>
+                Sign In to Staff Portal
+              </Btn>
+            </form>
+            <p style={{ textAlign: 'center', marginTop: 22, fontSize: 12, color: '#94a3b8' }}>
+              <Link to="/login/student" style={{ color: '#2563eb', fontWeight: 600 }}>Student</Link>
+              {' · '}
+              <Link to="/login/admin" style={{ color: '#b45309', fontWeight: 600 }}>Admin</Link>
+            </p>
+          </div>
         </div>
       </div>
     </div>
