@@ -122,7 +122,7 @@ const StaffMyUploads = () => {
         </div>
       </div>
 
-      <div style={{ ...card, overflow: 'hidden' }}>
+      <div className="table-scroll" style={{ ...card }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
           <thead>
             <tr style={{ borderBottom: '2px solid var(--card-border)', background: 'var(--page-bg-2)' }}>

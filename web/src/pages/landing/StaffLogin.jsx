@@ -33,9 +33,9 @@ const StaffLogin = () => {
       </div>
 
       <div style={{ position: 'relative', zIndex: 1, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 24px' }}>
-        <div style={{ width: '100%', maxWidth: 860, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, alignItems: 'center' }}>
+        <div className="login-split" style={{ maxWidth: 860 }}>
 
-          <div style={{ background: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(24px) saturate(150%)', WebkitBackdropFilter: 'blur(24px) saturate(150%)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 24, padding: '44px 40px', boxShadow: '0 8px 40px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.07)' }}>
+          <div className="login-left-panel" style={{ background: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(24px) saturate(150%)', WebkitBackdropFilter: 'blur(24px) saturate(150%)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 24, padding: '44px 40px', boxShadow: '0 8px 40px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.07)' }}>
             <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: 'rgba(255,255,255,0.38)', fontSize: 13, marginBottom: 44, textDecoration: 'none', transition: 'color 0.15s' }}
               onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.7)'}
               onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.38)'}>

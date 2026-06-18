@@ -48,7 +48,7 @@ const StudentLogin = () => {
       </div>
 
       <div style={{ position: 'relative', zIndex: 1, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 24px' }}>
-        <div style={{ width: '100%', maxWidth: 920, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, alignItems: 'center' }}>
+        <div className="login-split" style={{ maxWidth: 920 }}>
 
           {/* Left — branding glass panel */}
           <div style={{

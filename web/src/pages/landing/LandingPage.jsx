@@ -129,7 +129,7 @@ const LandingPage = () => {
 
       {/* Portal cards */}
       <div style={{ maxWidth: 1060, margin: '0 auto', padding: '0 28px 60px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 22 }}>
+        <div className="portal-grid">
           {portals.map((portal) => {
             const Icon = portal.icon
             return (
