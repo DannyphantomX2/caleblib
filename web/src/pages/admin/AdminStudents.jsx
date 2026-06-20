@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react'
+import * as XLSX from 'xlsx'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Search, UserX, UserCheck, Trash2, Key, Plus, Upload, X } from 'lucide-react'
 import api from '../../services/api'
@@ -93,8 +94,6 @@ const AdminStudents = () => {
     if (!file) return
     setBulkFile(file)
 
-    // Parse Excel using SheetJS
-    const XLSX = await import('xlsx')
     const reader = new FileReader()
     reader.onload = (evt) => {
       try {
@@ -103,9 +102,20 @@ const AdminStudents = () => {
         const rows = XLSX.utils.sheet_to_json(ws, { header: 1 })
 
         // Try to detect columns
-        const headers = rows[0]?.map(h => String(h).toLowerCase().trim()) || []
+        // Find header row (might not be row 0)
+        let headerRowIdx = 0
+        let headers = []
+        for (let i = 0; i < Math.min(5, rows.length); i++) {
+          const row = rows[i]?.map(h => String(h || '').toLowerCase().trim()) || []
+          if (row.some(h => h.includes('name') || h.includes('matric'))) {
+            headers = row
+            headerRowIdx = i
+            break
+          }
+        }
+
         const nameIdx = headers.findIndex(h => h.includes('name'))
-        const matricIdx = headers.findIndex(h => h.includes('matric') || h.includes('reg') || h.includes('number'))
+        const matricIdx = headers.findIndex(h => h.includes('matric') || h.includes('reg no') || h.includes('matric no'))
         const emailIdx = headers.findIndex(h => h.includes('email') || h.includes('mail'))
         const levelIdx = headers.findIndex(h => h.includes('level'))
 
@@ -114,8 +124,17 @@ const AdminStudents = () => {
           return
         }
 
-        const students = rows.slice(1)
-          .filter(row => row[nameIdx] && row[matricIdx])
+        const students = rows.slice(headerRowIdx + 1)
+          .filter(row => {
+            // Skip group label rows and empty rows
+            if (!row || row.length === 0) return false
+            const nameVal = String(row[nameIdx] || '').trim()
+            const matricVal = String(row[matricIdx] || '').trim()
+            // Skip rows where matric looks like a group label (no slash or numbers only pattern)
+            if (!matricVal || !matricVal.includes('/')) return false
+            if (!nameVal || nameVal.toUpperCase().includes('GROUP')) return false
+            return true
+          })
           .map(row => ({
             fullName: String(row[nameIdx]).trim(),
             matricNumber: String(row[matricIdx]).trim(),
