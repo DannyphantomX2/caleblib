@@ -9,7 +9,7 @@ import { formatRelativeTime } from '../../utils/helpers'
 import toast from 'react-hot-toast'
 
 const getViewedAnnouncements = () => {
-  try { return JSON.parse(localStorage.getItem('viewed_announcements') || '[]') }
+  try { return JSON.parse(localStorage.getItem('viewed_announcements_' + (JSON.parse(localStorage.getItem('caleblib_user') || '{}')._id || 'guest')) || '[]') }
   catch { return [] }
 }
 
@@ -17,7 +17,7 @@ const markAnnouncementsViewed = (ids) => {
   try {
     const existing = getViewedAnnouncements()
     const merged = [...new Set([...existing, ...ids])]
-    localStorage.setItem('viewed_announcements', JSON.stringify(merged))
+    localStorage.setItem('viewed_announcements_' + (JSON.parse(localStorage.getItem('caleblib_user') || '{}')._id || 'guest'), JSON.stringify(merged))
   } catch {}
 }
 

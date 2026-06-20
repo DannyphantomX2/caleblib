@@ -16,7 +16,7 @@ const typeColorMap = {
 // Get viewed announcement IDs from localStorage
 const getViewedAnnouncements = () => {
   try {
-    return JSON.parse(localStorage.getItem('viewed_announcements') || '[]')
+    return JSON.parse(localStorage.getItem('viewed_announcements_' + (JSON.parse(localStorage.getItem('caleblib_user') || '{}')._id || 'guest')) || '[]')
   } catch { return [] }
 }
 

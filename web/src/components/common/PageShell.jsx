@@ -7,7 +7,7 @@ import api from '../../services/api'
 import Spinner from './Spinner'
 
 const getViewedAnnouncements = () => {
-  try { return JSON.parse(localStorage.getItem('viewed_announcements') || '[]') } catch { return [] }
+  try { return JSON.parse(localStorage.getItem('viewed_announcements_' + (JSON.parse(localStorage.getItem('caleblib_user') || '{}')._id || 'guest')) || '[]') } catch { return [] }
 }
 
 const useIsMobile = () => {
