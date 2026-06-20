@@ -39,7 +39,7 @@ const AdminDashboard = () => {
       </div>
 
       {/* Stats grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 28 }}>
+      <div className="stat-grid-3">
         {isLoading ? [1,2,3,4,5,6].map(i => <SkStat key={i} />) : (
           <>
             <StatCard label="Total Students" value={data?.stats?.totalStudents ?? 0} icon={Users} color="var(--blue-600)" sub="Active registrations" />
@@ -52,7 +52,7 @@ const AdminDashboard = () => {
         )}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, marginBottom: 24 }}>
+      <div className="dashboard-two-col" style={{ marginBottom: 24 }}>
         {/* Pending resources */}
         <div style={{ background: 'var(--card-bg)', border: '1.5px solid #fde68a', borderRadius: 'var(--radius)', boxShadow: 'var(--card-shadow)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 20px', borderBottom: '1px solid var(--card-border)', background: '#fffbeb', borderRadius: '12px 12px 0 0' }}>
@@ -118,7 +118,7 @@ const AdminDashboard = () => {
       {/* Quick actions */}
       <div style={{ background: 'var(--card-bg)', border: '1px solid var(--card-border)', borderRadius: 'var(--radius)', padding: '18px 20px', boxShadow: 'var(--card-shadow)' }}>
         <h2 style={{ fontSize: 15, fontWeight: 700, marginBottom: 16 }}>Admin Actions</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+        <div className="stat-grid">
           {[
             { label: 'Manage Students', icon: Users, path: '/admin/users/students', color: 'var(--blue-600)' },
             { label: 'Manage Staff', icon: UserCheck, path: '/admin/users/staff', color: '#10b981' },

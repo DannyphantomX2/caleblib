@@ -257,3 +257,33 @@ input, textarea, select { font-family: var(--font); outline: none; }
   .stat-grid-3 { grid-template-columns: 1fr; }
   .portal-grid { grid-template-columns: 1fr; }
 }
+
+.dashboard-main {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 24px;
+}
+
+@media (max-width: 768px) {
+  .dashboard-main {
+    grid-template-columns: 1fr;
+  }
+  .stat-grid-3 {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.dashboard-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 768px) {
+  .dashboard-two-col {
+    grid-template-columns: 1fr;
+  }
+  .dashboard-main {
+    grid-template-columns: 1fr !important;
+  }
+}

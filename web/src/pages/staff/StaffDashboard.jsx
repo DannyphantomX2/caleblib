@@ -27,7 +27,7 @@ const StaffDashboard = () => {
         <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>Staff Portal · Computer Science Department · ID: {user?.employeeId}</p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 28 }}>
+      <div className="stat-grid-3">
         {isLoading ? [1,2,3].map(i => <SkStat key={i} />) : (
           <>
             <StatCard label="Total Uploads" value={data?.stats?.totalUploads ?? 0} icon={Upload} color="#10b981" sub={`${data?.stats?.approved ?? 0} approved`} />
@@ -37,7 +37,7 @@ const StaffDashboard = () => {
         )}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 24 }}>
+      <div className="dashboard-main">
         {/* Recent uploads */}
         <div style={{ background: 'var(--card-bg)', border: '1px solid var(--card-border)', borderRadius: 'var(--radius)', boxShadow: 'var(--card-shadow)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '18px 20px', borderBottom: '1px solid var(--card-border)' }}>

@@ -50,7 +50,7 @@ const StudentDashboard = () => {
       </div>
 
       {/* Stats */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 28 }}>
+      <div className="stat-grid-3">
         {isLoading ? [1,2,3].map(i => <SkStat key={i} />) : (
           <>
             <StatCard label="Total Resources" value={data?.stats?.totalResources ?? 0}
@@ -68,7 +68,7 @@ const StudentDashboard = () => {
         )}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 24 }}>
+      <div className="dashboard-main">
         {/* Recent resources */}
         <div style={{ background: 'var(--card-bg)', border: '1px solid var(--card-border)', borderRadius: 'var(--radius)', boxShadow: 'var(--card-shadow)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '18px 20px', borderBottom: '1px solid var(--card-border)' }}>
