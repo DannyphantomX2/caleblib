@@ -79,29 +79,32 @@ const seedStudentsBulk = async (req, res) => {
     if (!Array.isArray(students) || students.length === 0) {
       return res.status(400).json({ error: 'Provide an array of students' });
     }
-    const results = { added: 0, skipped: 0, errors: [] };
-    for (const s of students) {
-      try {
-        const exists = await StudentRegistry.findOne({
-          $or: [
-            { matricNumber: s.matricNumber?.toUpperCase() },
-            { email: s.email?.toLowerCase() }
-          ]
-        });
-        if (exists) { results.skipped++; continue; }
-        await StudentRegistry.create({ ...s, addedBy: req.user._id });
-        results.added++;
-      } catch (e) {
-        results.errors.push({ student: s.matricNumber, error: e.message });
-      }
+
+    // Get existing matric numbers in one query
+    const matrics = students.map(s => s.matricNumber).filter(Boolean);
+    const existing = await StudentRegistry.find({ matricNumber: { $in: matrics } }).select('matricNumber');
+    const existingSet = new Set(existing.map(e => e.matricNumber));
+
+    // Filter out duplicates
+    const toInsert = students
+      .filter(s => s.matricNumber && !existingSet.has(s.matricNumber))
+      .map(s => ({ ...s, addedBy: req.user._id }));
+
+    let added = 0;
+    if (toInsert.length > 0) {
+      await StudentRegistry.insertMany(toInsert, { ordered: false });
+      added = toInsert.length;
     }
+
+    const skipped = students.length - added;
+
     await log({
       userId: req.user._id, userEmail: req.user.email, userRole: 'admin',
       action: 'SEED_STUDENT',
-      description: `Bulk seeded ${results.added} students`,
+      description: `Bulk seeded ${added} students, skipped ${skipped} duplicates`,
       req
     });
-    return res.json({ success: true, results });
+    return res.json({ success: true, results: { added, skipped } });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
