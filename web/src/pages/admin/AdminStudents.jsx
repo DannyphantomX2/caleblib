@@ -50,11 +50,11 @@ const AdminStudents = () => {
 
   const bulkMutation = useMutation({
     mutationFn: async (students) => {
-      const r = await api.post('/admin/registry/bulk', { students })
+      const r = await api.post('/admin/registry/bulk', { students }, { timeout: 60000 })
       return r.data
     },
     onSuccess: (data) => {
-      toast.success(`${data.seeded} students added to registry`)
+      toast.success(`${data.results?.added || 0} students added, ${data.results?.skipped || 0} already existed`)
       queryClient.invalidateQueries(['admin-students'])
       setShowBulk(false)
       setBulkPreview([])
