@@ -287,3 +287,16 @@ input, textarea, select { font-family: var(--font); outline: none; }
     grid-template-columns: 1fr !important;
   }
 }
+
+/* Landing page mobile fixes */
+@media (max-width: 768px) {
+  .landing-hero {
+    padding: 36px 20px 28px !important;
+  }
+  .landing-hero h1 {
+    font-size: 28px !important;
+  }
+  .portal-grid {
+    padding: 0 16px 40px !important;
+  }
+}

@@ -67,30 +67,26 @@ const LandingPage = () => {
         borderBottom: '1px solid #1e3356',
         height: 56,
         display: 'flex', alignItems: 'center',
-        padding: '0 36px', gap: 14
+        padding: '0 20px', gap: 12
       }}>
         <div style={{
           width: 32, height: 32, borderRadius: 8,
           background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          boxShadow: '0 2px 8px rgba(59,130,246,0.4)'
+          boxShadow: '0 2px 8px rgba(59,130,246,0.4)', flexShrink: 0
         }}>
           <span style={{ fontSize: 16, fontWeight: 900, color: '#fff', letterSpacing: '-0.03em' }}>C</span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-          <span style={{ fontSize: 15, fontWeight: 800, color: '#e2e8f0', letterSpacing: '-0.01em' }}>CalebLib</span>
-          <span style={{ fontSize: 12, color: '#3a506b' }}>·</span>
-          <span style={{ fontSize: 12, color: '#64748b' }}>Caleb University CS Department</span>
-        </div>
+        <span style={{ fontSize: 15, fontWeight: 800, color: '#e2e8f0', letterSpacing: '-0.01em', flexShrink: 0 }}>CalebLib</span>
         <div style={{ flex: 1 }} />
-        <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: '#3a506b' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: '#3a506b', flexShrink: 0 }}>
           <Lock size={10} />
-          Restricted System
+          <span className="hide-mobile">Restricted System</span>
         </div>
       </header>
 
       {/* Hero */}
-      <div style={{ textAlign: 'center', padding: '56px 36px 44px' }}>
+      <div className="landing-hero" style={{ textAlign: 'center', padding: '56px 36px 44px' }}>
         {/* Badge — no dot */}
         <div style={{
           display: 'inline-flex', alignItems: 'center',
