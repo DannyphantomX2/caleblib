@@ -212,6 +212,7 @@ const AppRoutes = () => (
             <Route path="requests" element={<AdminRequests />} />
             <Route path="analytics" element={<AdminAnalytics />} />
             <Route path="audit-logs" element={<AdminAuditLogs />} />
+            <Route path="ml-analytics" element={<AdminMLAnalytics />} />
             <Route path="profile" element={<AdminProfile />} />
             <Route path="settings" element={<AdminSettings />} />
             <Route index element={<Navigate to="dashboard" />} />
