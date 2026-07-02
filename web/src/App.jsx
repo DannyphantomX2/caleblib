@@ -36,6 +36,7 @@ import AdminResources from './pages/admin/AdminResources'
 import AdminCourses from './pages/admin/AdminCourses'
 import AdminAnnouncements from './pages/admin/AdminAnnouncements'
 import AdminAuditLogs from './pages/admin/AdminAuditLogs'
+import AdminMLAnalytics from './pages/admin/AdminMLAnalytics'
 import AdminAnalytics from './pages/admin/AdminAnalytics'
 import AdminRequests from './pages/admin/AdminRequests'
 import AdminProfile from './pages/admin/AdminProfile'
@@ -45,7 +46,7 @@ import {
   LayoutDashboard, BookOpen, Bookmark, Download,
   MessageSquare, Bell, User, Settings,
   Upload, FileText, BarChart2, Megaphone,
-  Users, Shield, CheckCircle, BookMarked,
+  Users, Brain, Shield, CheckCircle, BookMarked,
   UserCheck, ClipboardList
 } from 'lucide-react'
 
@@ -88,6 +89,7 @@ const adminNav = [
     { to: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
     { to: '/admin/analytics', icon: BarChart2, label: 'Analytics' },
     { to: '/admin/audit-logs', icon: Shield, label: 'Audit Logs' },
+      { to: '/admin/ml-analytics', icon: Brain, label: 'ML Analytics' },
   ]},
   { label: 'Users', items: [
     { to: '/admin/users/students', icon: Users, label: 'Students' },

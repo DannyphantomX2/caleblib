@@ -171,8 +171,11 @@ def insights():
         'feature_options': {feat: list(mapping.keys()) for feat, mapping in le_dict.items() if feat != 'Adaptivity Level'}
     })
 
+# Train on startup regardless of how the app is launched
+print("Training model...")
+train_model()
+print("ML service ready")
+
 if __name__ == '__main__':
-    print("Training model...")
-    train_model()
-    print("Starting ML service on port 5001...")
-    app.run(host='0.0.0.0', port=5001, debug=False)
+    port = int(os.environ.get('PORT', 5001))
+    app.run(host='0.0.0.0', port=port, debug=False)
