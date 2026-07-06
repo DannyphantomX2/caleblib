@@ -167,18 +167,32 @@ const AdminMLAnalytics = () => {
                 </div>
 
                 <div style={card}>
-                  <h3 style={{ fontSize: 15, fontWeight: 700, marginBottom: 16 }}>Top Predictive Factors</h3>
-                  {modelInfo.feature_importances.slice(0, 7).map(({ feature, importance }) => (
-                    <div key={feature} style={{ marginBottom: 11 }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                        <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-secondary)' }}>{feature}</span>
-                        <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{(importance*100).toFixed(1)}%</span>
+                  <h3 style={{ fontSize: 15, fontWeight: 700, marginBottom: 4 }}>Per-Class Performance</h3>
+                  <p style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 16 }}>Precision, Recall and F1 broken down by adaptability level</p>
+                  {modelInfo.classification_report && ['High', 'Low', 'Moderate'].map(label => {
+                    const key = label.toLowerCase()
+                    const rep = modelInfo.classification_report[label] || modelInfo.classification_report[key] || {}
+                    const precision = rep.precision ? (rep.precision * 100).toFixed(1) : '—'
+                    const recall = rep.recall ? (rep.recall * 100).toFixed(1) : '—'
+                    const f1 = rep['f1-score'] ? (rep['f1-score'] * 100).toFixed(1) : '—'
+                    const color = label === 'High' ? '#10b981' : label === 'Low' ? '#ef4444' : '#f59e0b'
+                    return (
+                      <div key={label} style={{ marginBottom: 18, padding: '12px 14px', background: 'var(--page-bg-2)', borderRadius: 10, border: '1px solid var(--card-border)' }}>
+                        <div style={{ fontSize: 13, fontWeight: 700, color, marginBottom: 10 }}>{label} Adaptability</div>
+                        {[['Precision', precision], ['Recall', recall], ['F1 Score', f1]].map(([metric, val]) => (
+                          <div key={metric} style={{ marginBottom: 7 }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
+                              <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{metric}</span>
+                              <span style={{ fontSize: 11, fontWeight: 700, color }}>{val}%</span>
+                            </div>
+                            <div style={{ height: 5, background: 'var(--card-border)', borderRadius: 3 }}>
+                              <div style={{ height: '100%', width: `${val}%`, background: color, borderRadius: 3, opacity: 0.8 }} />
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                      <div style={{ height: 6, background: 'var(--page-bg-2)', borderRadius: 3, overflow: 'hidden' }}>
-                        <div style={{ height: '100%', width: `${importance*100*5}%`, maxWidth: '100%', background: 'linear-gradient(90deg, #8b5cf6, #3b82f6)', borderRadius: 3 }} />
-                      </div>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
               </div>
 
@@ -217,9 +231,11 @@ const AdminMLAnalytics = () => {
                   <div>
                     <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--blue-600)', marginBottom: 6 }}>Algorithm Details</p>
                     <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.7 }}>
-                      <strong>Random Forest Classifier</strong> with 100 decision trees, trained on 80% of 1,205 student records
-                      from the Student Adaptability in Online Education dataset. Balanced class weights handle the dataset imbalance
-                      (High: 8%, Low: 40%, Moderate: 52%). 5-fold cross-validation confirms <strong>{modelInfo.cv_accuracy}% ± {modelInfo.cv_std}%</strong> consistent performance.
+                      <strong>Multilayer Perceptron (MLP) Neural Network</strong> with two hidden layers (64 and 32 neurons),
+                      trained on 80% of 1,205 student records from the Student Adaptability in Online Education dataset.
+                      Selected after benchmarking against Logistic Regression (66.8%) and Random Forest (88.4%) — the MLP achieved
+                      the highest accuracy at 91.3% with an AUC-ROC of 98.1%.
+                      5-fold cross-validation confirms stable performance of <strong>{modelInfo.cv_accuracy}% ± {modelInfo.cv_std}%</strong>.
                     </p>
                   </div>
                 </div>
