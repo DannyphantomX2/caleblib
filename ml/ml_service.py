@@ -8,7 +8,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import pandas as pd
 import numpy as np
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
@@ -36,14 +36,14 @@ def train_model():
     y = df_encoded['Adaptivity Level']
     feature_names = list(X.columns)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
-    model = RandomForestClassifier(n_estimators=100, random_state=42, class_weight='balanced')
+    model = MLPClassifier(hidden_layer_sizes=(64, 32), max_iter=500, random_state=42)
     model.fit(X_train, y_train)
     y_pred = model.predict(X_test)
     acc = accuracy_score(y_test, y_pred)
     cv = cross_val_score(model, X, y, cv=5)
     cm = confusion_matrix(y_test, y_pred).tolist()
     report = classification_report(y_test, y_pred, target_names=['High','Low','Moderate'], output_dict=True)
-    feat_imp = sorted(zip(feature_names, model.feature_importances_), key=lambda x: x[1], reverse=True)
+    feat_imp = [(f, 0.0) for f in feature_names]  # MLP does not expose feature importances
     dist = df['Adaptivity Level'].value_counts().to_dict()
     model_meta = {
         'accuracy': round(float(acc), 4),
@@ -118,7 +118,7 @@ def model_info():
         'confusion_matrix': model_meta['confusion_matrix'],
         'confusion_matrix_labels': model_meta['confusion_matrix_labels'],
         'classification_report': model_meta['classification_report'],
-        'algorithm': 'Random Forest (100 estimators)',
+        'algorithm': 'Neural Network MLP (64-32 hidden layers)',
         'train_test_split': '80/20',
         'cross_validation': '5-Fold'
     })
