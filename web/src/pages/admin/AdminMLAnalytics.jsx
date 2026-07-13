@@ -121,7 +121,7 @@ const AdminMLAnalytics = () => {
           <div>
             <h1 style={{ fontSize: 24, fontWeight: 800, letterSpacing: '-0.02em' }}>ML Student Adaptability Analytics</h1>
             <p style={{ fontSize: 13, color: 'var(--text-muted)' }}>
-              Random Forest classifier · 1,205 student records · {modelInfo ? `${modelInfo.accuracy}% accuracy` : 'Loading...'}
+              Neural Network (MLP) · 1,205 student records · {modelInfo ? `${modelInfo.accuracy}% accuracy` : 'Loading...'}
             </p>
           </div>
         </div>
