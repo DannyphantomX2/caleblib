@@ -1,6 +1,6 @@
 """
 CalebLib ML Microservice
-Trains a Random Forest classifier on the Student Adaptability dataset
+Trains a Neural Network (MLP) classifier on the Student Adaptability dataset
 and exposes prediction + analytics endpoints.
 """
 
