@@ -49,7 +49,7 @@ Admins can input any student profile and get a prediction plus tailored recommen
 | File storage | GridFS (preserves original filenames on download) |
 | Frontend host | Vercel |
 | Backend host | Render |
-| ML host | Railway (separate service) |
+| ML host | Render (separate service) |
 | Database | MongoDB Atlas (M0 free tier) |
 
 ---
