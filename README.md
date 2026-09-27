@@ -48,7 +48,7 @@ Admins can input any student profile and get a prediction plus tailored recommen
 | ML Service | Python, Flask, scikit-learn (Random Forest) |
 | File storage | GridFS (preserves original filenames on download) |
 | Frontend host | Vercel |
-| Backend host | Railway |
+| Backend host | Render |
 | ML host | Railway (separate service) |
 | Database | MongoDB Atlas (M0 free tier) |
 
